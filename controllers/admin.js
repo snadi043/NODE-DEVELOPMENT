@@ -1,5 +1,6 @@
 const Product = require('../models/product');
 
+// GET Request to handle the add-product functionality using the controllers in MVC pattern.
 exports.getAddProduct = (req, res, next) => {
   res.render('admin/add-product', {
     pageTitle: 'Add Product',
@@ -10,6 +11,8 @@ exports.getAddProduct = (req, res, next) => {
   });
 };
 
+// POST Request to handle the add-product functionality using the controllers in MVC pattern and 
+// redirect it to the '/' path after sending and saving the data.
 exports.postAddProduct = (req, res, next) => {
   const title = req.body.title;
   const imageUrl = req.body.imageUrl;
@@ -20,6 +23,7 @@ exports.postAddProduct = (req, res, next) => {
   res.redirect('/');
 };
 
+// GET Request to handle the products managed by the admin functionality using the controllers in MVC pattern.
 exports.getProducts = (req, res, next) => {
   Product.fetchAll(products => {
     res.render('admin/products', {
