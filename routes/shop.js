@@ -21,6 +21,16 @@ router.get('/', shopController.getIndex);
 // importing the shopController middleware from the controllers folder and executing the method getProducts.
 router.get('/products', shopController.getProducts);
 
+// /products => GET
+// importing the shopController middleware from the controllers folder and executing the method getProductDetailsById.
+// Also, handling the dynamic productId parameter to use it in the controller and respond with the details of the individual product.
+
+// Also, when handling with routes dealing with both specific endpoints and dynamic parameters involved routes
+// it is always important to put the more specific routes on the top of the file because the execution happens from top to bottom
+// so, when kept the dynamic routes in the top the other routes with the same common path will also be considered as dynamic and 
+// gives an error is the functionality of the routes as the user expected.
+router.get('/products/:productId', shopController.getProductDetailsById)
+
 // /cart => GET
 // importing the shopController middleware from the controllers folder and executing the method getCart.
 router.get('/cart', shopController.getCart);

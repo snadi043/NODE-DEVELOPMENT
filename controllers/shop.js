@@ -11,6 +11,16 @@ exports.getProducts = (req, res, next) => {
   });
 };
 
+// GET Request to handle the display of the product details functionality using the controllers in MVC pattern.
+exports.getProductDetailsById = (req, res, next) => {
+  const prodId = req.params.productId;
+  Product.findProductById(prodId, product => {
+    console.log(product);
+    res.redirect('/');
+  })
+}
+
+
 // GET Request to handle the edit products functionality using the controllers in MVC pattern.
 exports.getIndex = (req, res, next) => {
   Product.fetchAll(products => {

@@ -31,6 +31,8 @@ module.exports = class Product {
   }
 
   save() {
+  // Adding the unique product Id to all the products
+  const productID = Math.random().toString();
   // Once the path is created, reading a file to then check if empty then create an empty array as default, or else parse the fileContent.
     getProductsFromFile(products => {
   //Once the read process is done then push the data by taking the real data (i,e the context) using 'this' keyword.
@@ -38,6 +40,14 @@ module.exports = class Product {
       fs.writeFile(p, JSON.stringify(products), err => {
         console.log(err);
       });
+    });
+  }
+
+  // findProductById is the method useful for finding the product by the particular id and return that product with all the details.
+  static findProductById(id, cb){
+    getProductsFromFile(products => {
+      const product = products.find(p => p.id === id);
+      cb(product);
     });
   }
 
