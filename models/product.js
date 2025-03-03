@@ -32,7 +32,7 @@ module.exports = class Product {
 
   save() {
   // Adding the unique product Id to all the products
-  const productID = Math.random().toString();
+  this.id = Math.random().toString();
   // Once the path is created, reading a file to then check if empty then create an empty array as default, or else parse the fileContent.
     getProductsFromFile(products => {
   //Once the read process is done then push the data by taking the real data (i,e the context) using 'this' keyword.
