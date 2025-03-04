@@ -1,4 +1,5 @@
 const Product = require('../models/product');
+const Cart = require('../models/cart');
 
 // GET Request to handle the display of the products functionality using the controllers in MVC pattern.
 exports.getProducts = (req, res, next) => {
@@ -42,6 +43,20 @@ exports.getCart = (req, res, next) => {
     pageTitle: 'Your Cart'
   });
 };
+
+// POST Request to handle the Shopping Cart Page after clicking on "add-to-cart" button when 
+// navigated from "details" button in the prodcuts page using the controllers in the MVC pattern.
+exports.postCart = (req, res, next) => {
+  const prodId = req.body.productId;
+  Product.findProductById(prodId, (product) => {
+    Cart.addToCart(prodId, product.price);
+  });
+  // {
+    // path: '/cart',
+    // pageTitle: 'Add to Cart'
+  // }
+  res.redirect('/cart');
+}
 
 // GET Request to handle the Orders Page using the controllers in the MVC pattern.
 exports.getOrders = (req, res, next) => {

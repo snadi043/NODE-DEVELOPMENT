@@ -35,6 +35,10 @@ router.get('/products/:productId', shopController.getProductDetailsById)
 // importing the shopController middleware from the controllers folder and executing the method getCart.
 router.get('/cart', shopController.getCart);
 
+// /cart => POST
+// importing the shopController middleware from the controllers folder and executing the method postCart.
+router.post('/cart', shopController.postCart);
+
 // /orders => GET
 // importing the shopController middleware from the controllers folder and executing the method getOrders.
 router.get('/orders', shopController.getOrders);
