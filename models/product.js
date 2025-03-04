@@ -3,6 +3,8 @@ const fs = require('fs');
 //importing the path creator node - (core module) to construct the correct paths based on the OS of the system to avoid the errors.
 const path = require('path');
 
+const Cart = require('./cart');
+
 //creating the path to store the data into a file in the data -  directory with the name 'products.json'
 const p = path.join(
   path.dirname(process.mainModule.filename),
@@ -23,7 +25,8 @@ const getProductsFromFile = cb => {
 };
 
 module.exports = class Product {
-  constructor(title, imageUrl, description, price) {
+  constructor(id, title, imageUrl, description, price) {
+    this.id = id;
     this.title = title;
     this.imageUrl = imageUrl;
     this.description = description;
@@ -31,17 +34,28 @@ module.exports = class Product {
   }
 
   save() {
-  // Adding the unique product Id to all the products
-  this.id = Math.random().toString();
-  // Once the path is created, reading a file to then check if empty then create an empty array as default, or else parse the fileContent.
+    // Once the path is created, reading a file to then check if empty then create an empty array as default, or else parse the fileContent.
     getProductsFromFile(products => {
-  //Once the read process is done then push the data by taking the real data (i,e the context) using 'this' keyword.
-      products.push(this);
-      fs.writeFile(p, JSON.stringify(products), err => {
-        console.log(err);
+    // checking if the product is existing product or new product and if it is existing then update the particular product.
+      if(this.id){
+        const existingProductIndex = products.findIndex(prod => prod.id === this.id);
+        const updatedProducts =  [ ...products];
+        updatedProducts[existingProductIndex] = this; 
+          fs.writeFile(p, JSON.stringify(updatedProducts), (err) => {
+            console.log(err);
+          });
+      }
+      else{
+        // Adding the unique product Id to all the products
+        this.id = Math.random().toString();
+        //Once the read process is done then push the data by taking the real data (i,e the context) using 'this' keyword.
+          products.push(this);
+          fs.writeFile(p, JSON.stringify(products), err => {
+            console.log(err);
+          });
+        }
       });
-    });
-  }
+    }
 
   // findProductById is the method useful for finding the product by the particular id and return that product with all the details.
   static findProductById(id, cb){
@@ -49,6 +63,20 @@ module.exports = class Product {
       const product = products.find(p => p.id === id);
       cb(product);
     });
+  }
+
+  // deleteProductById is the method useful for deleting the product by the particular id.
+  static deleteProductById(id){
+    getProductsFromFile(products => {
+      const product = products.find(prod => prod.id === id);
+      const updatedproducts = products.filter(p => p.id !== id);
+      fs.writeFile(p, JSON.stringify(updatedproducts), err => {
+        if(!err){
+          Cart.deleteProduct(id, product.price);
+        }
+        console.log(err);
+      });
+  });
   }
 
   static fetchAll(cb) {

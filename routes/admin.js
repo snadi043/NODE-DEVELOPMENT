@@ -28,4 +28,12 @@ router.post('/add-product', adminController.postAddProduct);
 // /admin/edit-product => GET
 // importing the adminController middleware from the controllers folder and executing the method getEditProduct.
 router.get('/edit-product/:productId', adminController.getEditProductById);
+
+// /admin/edit-product => POST
+// importing the adminController middleware from the controllers folder and executing the method postEditProduct.
+router.post('/edit-product', adminController.postEditProduct);
+
+// /admin/delete-product => POST
+// importing the adminController middleware from the controllers folder and executing the method postDeleteProduct.
+router.post('/delete-product', adminController.postDeleteProduct);
 module.exports = router;

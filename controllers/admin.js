@@ -5,6 +5,7 @@ exports.getAddProduct = (req, res, next) => {
   res.render('admin/edit-product', {
     pageTitle: 'Add Product',
     path: '/admin/add-product',
+    editing: false
   });
 };
 
@@ -15,7 +16,7 @@ exports.postAddProduct = (req, res, next) => {
   const imageUrl = req.body.imageUrl;
   const price = req.body.price;
   const description = req.body.description;
-  const product = new Product(title, imageUrl, description, price);
+  const product = new Product(null, title, imageUrl, description, price);
   product.save();
   res.redirect('/');
 };
@@ -33,14 +34,14 @@ exports.getProducts = (req, res, next) => {
 
 // GET Request to handle the edit products functionality managed by the admin using the controllers in MVC pattern.
 exports.getEditProductById = (req, res, next) => {
-  const prodId = req.params.productId;
   const editMode = req.query.edit;
+  if(!editMode){
+    return res.redirect('/');
+  }
+  const prodId = req.params.productId;
   Product.findProductById(prodId, (product) => {
-    if(!editMode){
-      return res.redirect('/');
-    }
     if(!product){
-      return;
+      return res.redirect('/');
     }
     res.render('admin/edit-product', {
       pageTitle: 'Edit Product',
@@ -49,4 +50,23 @@ exports.getEditProductById = (req, res, next) => {
       editing: editMode,
     });
     });
+}
+
+// POST Request to handle the edited products functionality managed by the admin and saving it back using the controllers in MVC pattern.
+exports.postEditProduct = (req, res, next) => {
+  const prodId = req.body.productId;
+  const updatedTitle = req.body.title;
+  const updatedImage = req.body.imageUrl;
+  const updatedPrice = req.body.price;
+  const updatedDescription = req.body.description;
+  const updatedProduct = new Product(prodId, updatedTitle, updatedImage, updatedPrice, updatedDescription);
+  updatedProduct.save();
+  res.redirect('/admin/products');
+}
+
+// POST Request to handle the delete products functionality managed by the admin and also deleting the product from the cart using the controllers in MVC pattern.
+exports.postDeleteProduct = (req, res, next) => {
+  const prodId = req.body.productId;
+  Product.deleteProductById(prodId);
+  res.redirect('/admin/products');
 }
