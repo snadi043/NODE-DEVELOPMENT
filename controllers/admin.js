@@ -2,12 +2,9 @@ const Product = require('../models/product');
 
 // GET Request to handle the add-product functionality using the controllers in MVC pattern.
 exports.getAddProduct = (req, res, next) => {
-  res.render('admin/add-product', {
+  res.render('admin/edit-product', {
     pageTitle: 'Add Product',
     path: '/admin/add-product',
-    formsCSS: true,
-    productCSS: true,
-    activeAddProduct: true
   });
 };
 
@@ -33,3 +30,23 @@ exports.getProducts = (req, res, next) => {
     });
   });
 };
+
+// GET Request to handle the edit products functionality managed by the admin using the controllers in MVC pattern.
+exports.getEditProductById = (req, res, next) => {
+  const prodId = req.params.productId;
+  const editMode = req.query.edit;
+  Product.findProductById(prodId, (product) => {
+    if(!editMode){
+      return res.redirect('/');
+    }
+    if(!product){
+      return;
+    }
+    res.render('admin/edit-product', {
+      pageTitle: 'Edit Product',
+      path: '/admin/edit-product',
+      product: product,
+      editing: editMode,
+    });
+    });
+}

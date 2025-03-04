@@ -25,4 +25,7 @@ router.get('/products', adminController.getProducts);
 // importing the adminController middleware from the controllers folder and executing the method postAddProduct.
 router.post('/add-product', adminController.postAddProduct);
 
+// /admin/edit-product => GET
+// importing the adminController middleware from the controllers folder and executing the method getEditProduct.
+router.get('/edit-product/:productId', adminController.getEditProductById);
 module.exports = router;
