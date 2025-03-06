@@ -73,3 +73,25 @@ exports.getCheckout = (req, res, next) => {
     pageTitle: 'Checkout'
   });
 };
+
+
+// GET Request to handle the Fetch products in the cart functionality which is managed by the shop and 
+// also checking the product id to handle the product details in the cart.
+exports.getCartProducts = (req, res, next) => {
+  Cart.getCartProducts(cart => {
+    Product.fetchAll(products => {
+      const cartProducts = [];
+      for (product of products){
+        const cartProductData = cart.products.find(prod => prod.id === product.id);
+        if(cartProductData){
+          cartProducts.push({productData: product, qty: cartProductData.qty});
+        }
+      }
+        res.render('shop/cart', {
+        path: 'cart',
+        products: cartProducts,
+      }
+    );
+  });
+});
+} 

@@ -18,10 +18,10 @@ module.exports = class Cart{
        fs.readFile(p, (err, fileContent) => {
         let cart = {products: [], totalPrice: 0};
         if(!err){
-            cart = JSON.parse(fileContent);
+            cart = { ...JSON.parse(fileContent)};
         }
     // Analyzing the cart
-    const exisitingProductIndex = cart.products.findByIndex(p => p.id === id);
+    const exisitingProductIndex = cart.products.findIndex(p => p.id === id);
     const existingProduct = cart.products[exisitingProductIndex];
     let updatedProduct;
     // Analyze the data -> if old product, then check the id, update the price and add the quantity by 1.
@@ -44,6 +44,7 @@ module.exports = class Cart{
     }); 
     }
 
+    // Function to delete the products from the cart based on the id and the productPrice.
     static deleteProduct(id, productPrice){
         fs.readFile(p, (err, fileContent) => {
             if(err){
@@ -57,7 +58,19 @@ module.exports = class Cart{
         fs.writeFile(p, JSON.parse(updatedCart), err => {
             console.log(err);
         });
-        const updatedPrice = cart.products.price - productPrice;
     });
-}
+    }
+
+    // Fetch all the items in the cart if we have the items added to the cart.
+    static getCartProducts(cb){
+        fs.readFile(p, (err, fileContent) => {
+            cart = JSON.parse(fileContent);
+            if(err){
+                return cb(null);
+            }
+            else{
+                cb(cart);
+            }
+        });
+    }
 }

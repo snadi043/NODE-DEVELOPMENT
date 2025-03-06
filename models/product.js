@@ -79,6 +79,7 @@ module.exports = class Product {
   });
   }
 
+  //Fetching all the products from the file using the getProductsFromFile methos.
   static fetchAll(cb) {
     getProductsFromFile(cb);
   }
