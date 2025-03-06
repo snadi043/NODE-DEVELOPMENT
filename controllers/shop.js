@@ -87,11 +87,20 @@ exports.getCartProducts = (req, res, next) => {
           cartProducts.push({productData: product, qty: cartProductData.qty});
         }
       }
-        res.render('shop/cart', {
-        path: 'cart',
+        res.render('/cart', {
+        path: '/cart',
         products: cartProducts,
       }
     );
   });
 });
 } 
+
+// POST Request to handle the delete product in the cart functionality which is managed by the shop.
+exports.postDeleteCartProduct = (req, res, next) => {
+  const prodId = req.body.productId;
+  Product.findProductById(prodId, product => {
+    Cart.deleteProduct(prodId, product.price);
+    res.render('/cart');
+  });
+}
