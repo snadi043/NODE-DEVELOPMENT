@@ -70,3 +70,19 @@ exports.postDeleteProduct = (req, res, next) => {
   Product.deleteProductById(prodId);
   res.redirect('/admin/products');
 }
+
+// GET Request to handle the Fetch products in the cart functionality which is managed by the admin and 
+// also checking the product id to handle the product details in the cart.
+exports.getCartProducts = (req, res, next) => {
+  Cart.getCartProducts(products => {
+    const updatedCart = [];
+    Product.findProductById(prod => prod.id === products.id, productData = {
+
+    },
+      res.render('/shop/cart'), {
+        path: '/shop/cart',
+        products: productData,
+      }
+    );
+  });
+}

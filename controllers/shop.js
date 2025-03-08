@@ -2,14 +2,15 @@ const Product = require('../models/product');
 const Cart = require('../models/cart');
 
 // GET Request to handle the display of the products functionality using the controllers in MVC pattern.
+// Implementing using the database and promises.
 exports.getProducts = (req, res, next) => {
-  Product.fetchAll(products => {
-    res.render('shop/product-list', {
-      prods: products,
-      pageTitle: 'All Products',
-      path: '/products'
-    });
-  });
+  Product.fetchAll().then(([rows, databaseMetaData]) => {
+      res.render('shop/product-list', {
+        prods: rows,
+        pageTitle: 'All Products',
+        path: '/products'
+      });
+    }).catch(err => console.log(err));
 };
 
 // GET Request to handle the display of the product details functionality using the controllers in MVC pattern.
@@ -27,13 +28,16 @@ exports.getProductDetailsById = (req, res, next) => {
 
 // GET Request to handle the edit products functionality using the controllers in MVC pattern.
 exports.getIndex = (req, res, next) => {
-  Product.fetchAll(products => {
-    res.render('shop/index', {
-      prods: products,
+  // If you execute the code below in the line 32 you get the result of two arrays which is nested into an array.
+  // So, to avoid it here using the array destructing to handle the individual array values.
+  // Product.fetchAll().then(result => console.log(result)).catch(err => console.log(err));
+  Product.fetchAll().then(([rows, databaseMetaData]) => {
+    res.render('shop/index',{
+      prods: rows,
       pageTitle: 'Shop',
       path: '/'
     });
-  });
+  }).catch(err => console.log(err));
 };
 
 // GET Request to handle the Shopping Cart Page using the controllers in the MVC pattern.

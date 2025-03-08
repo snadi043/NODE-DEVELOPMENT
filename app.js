@@ -7,17 +7,6 @@ const path = require('path');
 // easily by taking of the heavy lifting using in-built functions, utilities and many more. 
 const express = require('express');
 
-//importing the database using the mysql.
-const db = require('./util/database');
-
-// Connecting the dabase server with the SQL queries with the execute method followed by the then() which is to handle the promise
-// created in the app.js and then to catch() if there are any errors while exeution of the promise.
-db.execute('SELECT * FROM products').then(
-    result => {console.log(result)}
-).catch(
-    err => {console.log(err)}
-);
-
 // Importing the Error controller to handle the error page request and send the response. 
 const errorController = require('./controllers/error');
 
