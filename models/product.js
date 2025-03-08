@@ -101,12 +101,15 @@ module.exports = class Product{
   constructor(id, title, imageUrl, price, description){
     this.id = id;
     this.title = title;
-    this.imageUrl = imageUrl;
     this.price = price;
     this.description = description;
+    this.imageUrl = imageUrl;
   }
-  save(){
 
+  save(){
+    // Always maintain the insertion of data with the same format as displayed in the database columns
+    // To avoid SQL injection adding an extra layer of security to avoid unauthorized data into the data fields when posting into database.
+    return db.execute('INSERT INTO products (title, price, description, imageUrl) VALUES (?, ?, ?, ?)', [this.title, this.price, this.description, this.imageUrl]);
   }
 
   // Connecting the dabase server with the SQL queries with the execute method followed by the then() which is to handle the promise
