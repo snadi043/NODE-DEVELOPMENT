@@ -122,6 +122,12 @@ module.exports = class Product{
   static fetchAll(){
     return db.execute('SELECT * FROM products'); 
   }
+
+  // Here implementing the getProductById() method using the mysql database connection.
+
+  static getProductById(id){
+    return db.execute('SELECT * FROM products WERE products.id = ?', [id])
+  }
 }
 
 
