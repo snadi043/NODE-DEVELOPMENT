@@ -9,7 +9,9 @@
 <%- include('../includes/navigation.ejs') %>
 
  <main>
-     <form class="product-form" action="/admin/ <% if (editing) { %>edit-product<% } else { %> add-product  <% } %>" method="POST">
+    <!-- Avoid the spaces between the letters and the loop statements when working with "ejs" 
+    to escape from the unnecessary data which can be added to the endpoints after redirecting. -->
+     <form class="product-form" action="/admin/<%if(editing){%>edit-product<%}else{%>add-product<%}%>" method="POST">
          <div class="form-control">
              <label for="title">Title</label>
              <input type="text" name="title" id="title" value="<% if(editing) { %> <%= product.title %><% } %>"/>
