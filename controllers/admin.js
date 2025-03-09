@@ -16,8 +16,20 @@ exports.postAddProduct = (req, res, next) => {
   const imageUrl = req.body.imageUrl;
   const price = req.body.price;
   const description = req.body.description;
-  const product = new Product(null, title, imageUrl, description, price);
-  product.save().then(() => {res.redirect('/')}).catch(err => console.log(err));
+  // const product = new Product(null, title, imageUrl, description, price);
+  // product.save().then(() => {res.redirect('/')}).catch(err => console.log(err));
+
+  // Using the new product (Model) which is created based on Sequelize.
+  Product.create({
+    title: title,
+    imageUrl: imageUrl,
+    price: price,
+    description: description
+  }).then(
+    // result => console.log(result)
+    console.log('New Product Added'),
+  ).catch(
+    err => console.log(err));
 };
 
 // GET Request to handle the products managed by the admin functionality using the controllers in MVC pattern.
