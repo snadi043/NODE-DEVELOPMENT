@@ -33,14 +33,16 @@ exports.postAddProduct = (req, res, next) => {
 };
 
 // GET Request to handle the products managed by the admin functionality using the controllers in MVC pattern.
+// Implementing the findAll() method provided by the "SEQUELIZE" package to handle the getProducts() request
+// and then handling the response and the error through javascript promise concept with then() and catch().
 exports.getProducts = (req, res, next) => {
-  Product.fetchAll(products => {
+  Product.findAll().then(products => {
     res.render('admin/products', {
       prods: products,
       pageTitle: 'Admin Products',
       path: '/admin/products'
     });
-  });
+  }).catch(err => console.log(err));
 };
 
 // GET Request to handle the edit products functionality managed by the admin using the controllers in MVC pattern.
