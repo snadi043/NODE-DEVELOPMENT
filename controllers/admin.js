@@ -46,6 +46,8 @@ exports.getProducts = (req, res, next) => {
 };
 
 // GET Request to handle the edit products functionality managed by the admin using the controllers in MVC pattern.
+// Implementing the findByPk() method provided by the "SEQUELIZE" package to handle the getEditProductById() request
+// and then handling the response and the error through javascript promise concept with then() and catch().
 exports.getEditProductById = (req, res, next) => {
   const editMode = req.query.edit;
   if(!editMode){
@@ -68,6 +70,8 @@ exports.getEditProductById = (req, res, next) => {
 }
 
 // POST Request to handle the edited products functionality managed by the admin and saving it back using the controllers in MVC pattern.
+// Implementing the findByPk() method provided by the "SEQUELIZE" package to handle the postEditProduct() request and executing the save() 
+// method on the updated products which is returned and then handling the response and the error through javascript promise concept with then() and catch().
 exports.postEditProduct = (req, res, next) => {
   const prodId = req.body.productId;
   const updatedTitle = req.body.title;
