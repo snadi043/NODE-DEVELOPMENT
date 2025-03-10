@@ -52,17 +52,19 @@ exports.getEditProductById = (req, res, next) => {
     return res.redirect('/');
   }
   const prodId = req.params.productId;
-  Product.findProductById(prodId, (product) => {
-    if(!product){
-      return res.redirect('/');
-    }
-    res.render('admin/edit-product', {
-      pageTitle: 'Edit Product',
-      path: '/admin/edit-product',
-      product: product,
-      editing: editMode,
-    });
-    });
+  Product.findByPk(prodId).then(
+    (product) => {
+      if(!product){
+        return res.redirect('/');
+      }
+      res.render('admin/edit-product', {
+        pageTitle: 'Edit Product',
+        path: '/admin/edit-product',
+        product: product,
+        editing: editMode,
+      });
+      }
+  ).catch(err => console.log(err));
 }
 
 // POST Request to handle the edited products functionality managed by the admin and saving it back using the controllers in MVC pattern.
@@ -72,9 +74,17 @@ exports.postEditProduct = (req, res, next) => {
   const updatedImage = req.body.imageUrl;
   const updatedPrice = req.body.price;
   const updatedDescription = req.body.description;
-  const updatedProduct = new Product(prodId, updatedTitle, updatedImage, updatedPrice, updatedDescription);
-  updatedProduct.save();
-  res.redirect('/admin/products');
+  Product.findByPk(prodId).then(product => {
+    product.title = updatedTitle;
+    product.imageUrl = updatedImage;
+    product.price = updatedPrice;
+    product.description = updatedDescription;
+    product.save();
+  }).then(result => {
+    console.log('Updated product');   
+    res.redirect('/admin/products');
+    })
+  .catch(err => console.log(err));
 }
 
 // POST Request to handle the delete products functionality managed by the admin and also deleting the product from the cart using the controllers in MVC pattern.
