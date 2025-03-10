@@ -94,8 +94,14 @@ exports.postEditProduct = (req, res, next) => {
 // POST Request to handle the delete products functionality managed by the admin and also deleting the product from the cart using the controllers in MVC pattern.
 exports.postDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
-  Product.deleteProductById(prodId);
-  res.redirect('/admin/products');
+  Product.findByPk(prodId).then(product => {
+    return product.destroy();
+  }).then(result => {
+    console.log('Product Deleted');
+    res.redirect('/admin/products');
+  }).catch(err => {
+    console.log(err);
+  })
 }
 
 // GET Request to handle the Fetch products in the cart functionality which is managed by the admin and 
