@@ -94,40 +94,75 @@
 //    file system.
 
 
-//importing the database using the mysql.
-const db = require('../util/database');
+// //importing the database using the mysql.
+// const db = require('../util/database');
 
-module.exports = class Product{
-  constructor(id, title, imageUrl, price, description){
-    this.id = id;
-    this.title = title;
-    this.price = price;
-    this.description = description;
-    this.imageUrl = imageUrl;
+// module.exports = class Product{
+//   constructor(id, title, imageUrl, price, description){
+//     this.id = id;
+//     this.title = title;
+//     this.price = price;
+//     this.description = description;
+//     this.imageUrl = imageUrl;
+//   }
+
+//   save(){
+//     // Always maintain the insertion of data with the same format as displayed in the database columns
+//     // To avoid SQL injection adding an extra layer of security to avoid unauthorized data into the data fields when posting into database.
+//     return db.execute('INSERT INTO products (title, price, description, imageUrl) VALUES (?, ?, ?, ?)', [this.title, this.price, this.description, this.imageUrl]);
+//   }
+
+//   // Connecting the dabase server with the SQL queries with the execute method followed by the then() which is to handle the promise
+//   // created in the app.js and then to catch() if there are any errors while exeution of the promise.
+
+//   // Here implementing the fetchAll() method using the mysql database connection.
+
+//   // In the fetchAll() method, return the result of the query which is used later in the controller to handle the reuslt there
+//   // the help of promise and methods then() and catch().
+//   static fetchAll(){
+//     return db.execute('SELECT * FROM products'); 
+//   }
+
+//   // Here implementing the getProductById() method using the mysql database connection.
+
+//   static getProductById(id){
+//     return db.execute('SELECT * FROM products WERE products.id = ?', [id])
+//   }
+// }
+
+
+// Here, we are using SEQUELIZE package to replace the work done with MySQL quires.
+// Importing the "SEQUELIZE" package.
+const Sequelize = require('sequelize');
+
+// Configuring the "SEQUELIZE" package from the Database file where it is instanciated.
+const sequelize = require('../util/database');
+
+// Creating the model using "SEQUELIZE" package with all the columns expecting to be in the database table.
+const Product = sequelize.define('product', {
+  id: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    autoIncrement: true,
+    primaryKey: true,
+  },
+  title: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+  price: {
+    type: Sequelize.DOUBLE,
+    allowNull: false,
+  },
+  imageUrl: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+  description: {
+    type: Sequelize.STRING,
+    allowNull: false,
   }
+});
 
-  save(){
-    // Always maintain the insertion of data with the same format as displayed in the database columns
-    // To avoid SQL injection adding an extra layer of security to avoid unauthorized data into the data fields when posting into database.
-    return db.execute('INSERT INTO products (title, price, description, imageUrl) VALUES (?, ?, ?, ?)', [this.title, this.price, this.description, this.imageUrl]);
-  }
-
-  // Connecting the dabase server with the SQL queries with the execute method followed by the then() which is to handle the promise
-  // created in the app.js and then to catch() if there are any errors while exeution of the promise.
-
-  // Here implementing the fetchAll() method using the mysql database connection.
-
-  // In the fetchAll() method, return the result of the query which is used later in the controller to handle the reuslt there
-  // the help of promise and methods then() and catch().
-  static fetchAll(){
-    return db.execute('SELECT * FROM products'); 
-  }
-
-  // Here implementing the getProductById() method using the mysql database connection.
-
-  static getProductById(id){
-    return db.execute('SELECT * FROM products WERE products.id = ?', [id])
-  }
-}
-
-
+// Exporting the model created with the "SEQUELIZE"
+module.exports = Product;

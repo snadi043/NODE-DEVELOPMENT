@@ -10,6 +10,9 @@ const express = require('express');
 // Importing the Error controller to handle the error page request and send the response. 
 const errorController = require('./controllers/error');
 
+// Importing the database using "SEQUELIZE"
+const Sequelize = require('./util/database');
+
 const app = express(); // express() is the method which has the access to use all its features provided by the express framework to be used in the application.
 
 //importing body-parser third party package. Body Parser helps to retrive the actual data from the repsonse
@@ -23,6 +26,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 //importing the route modules to use in this file.
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
+const sequelize = require('./util/database');
 
 // Here is where to inject the dynamic HTML content into the Views using the Templates (ejs, Pug and Handlebars)
 app.set('view engine', 'ejs'); //In this project, since it is based on ejs, So, setting the default view engine to use the "ejs" template.
@@ -37,8 +41,14 @@ app.use(shopRoutes);
 // Handling the Error response by utilizing the errorController with the extension get404().
 app.use(errorController.get404);
 
+// Here, in the app.js file is where the "SEQUELIZE" sync method has to be executed to enable
+// SEQUELIZE build tables in the database.
+Sequelize.sync().then(result => {
+    console.log(result);
+    app.listen(3000);
+}).catch(err => console.log(err));
+
 //listen is a method which makes the server listen to the events and display the responses on 
 // the browser in the particular port provided.
-app.listen(3000);
 
 

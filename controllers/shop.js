@@ -4,26 +4,33 @@ const Cart = require('../models/cart');
 // GET Request to handle the display of the products functionality using the controllers in MVC pattern.
 // Implementing using the database and promises.
 exports.getProducts = (req, res, next) => {
-  Product.fetchAll().then(([rows, databaseMetaData]) => {
-      res.render('shop/product-list', {
-        prods: rows,
-        pageTitle: 'All Products',
-        path: '/products'
-      });
+  Product.findAll().then(products => {
+    res.render('shop/product-list', {
+      prods: products,
+      pageTitle: 'All Products',
+      path: '/products'
+    });
     }).catch(err => console.log(err));
 };
 
 // GET Request to handle the display of the product details functionality using the controllers in MVC pattern.
 exports.getProductDetailsById = (req, res, next) => {
   const prodId = req.params.productId;
-  Product.getProductById(prodId).then(([product]) => {
-    console.log(product);
-    // res.render('shop/product-detail', {
-    //   product : product,
-    //   pageTitle: product.title,
-    //   path: '/products'
-    // });
-  }).catch(err => console.log(err));
+  Product.findAll({where: {id : prodId}}).then(product => 
+    res.render('shop/product-detail', {
+    product: product[0],
+    pageTitle: product[0].title,
+    path: '/products'
+  })
+).catch(err => console.log(err));
+  // Product.getProductById(prodId).then(([product]) => {
+  //   console.log(product);
+  //   // res.render('shop/product-detail', {
+  //   //   product : product,
+  //   //   pageTitle: product.title,
+  //   //   path: '/products'
+  //   // });
+  // }).catch(err => console.log(err));
 }
 
 
@@ -32,9 +39,9 @@ exports.getIndex = (req, res, next) => {
   // If you execute the code below in the line 32 you get the result of two arrays which is nested into an array.
   // So, to avoid it here using the array destructing to handle the individual array values.
   // Product.fetchAll().then(result => console.log(result)).catch(err => console.log(err));
-  Product.fetchAll().then(([rows, databaseMetaData]) => {
+  Product.findAll().then(products => {
     res.render('shop/index',{
-      prods: rows,
+      prods: products,
       pageTitle: 'Shop',
       path: '/'
     });
