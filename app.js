@@ -13,6 +13,8 @@ const errorController = require('./controllers/error');
 //Importing the Models to create the relations in the Sequelize defined database.
 const Product = require('./models/product');
 const User = require('./models/user');
+const Cart = require('./models/cart');
+const CartItem = require('./models/cart-item');
 
 const app = express(); // express() is the method which has the access to use all its features provided by the express framework to be used in the application.
 
@@ -54,15 +56,21 @@ app.use((req, res, next) => {
 // Configuring the databse with the "RELATIONS / ASSOCAITIONS" concept in "SEQUELIZE".
 Product.belongsTo(User, {constraints: true, onDelete: 'cascade'}); // This is stating that a product can be created by the user.
 User.hasMany(Product); // This is stating that a user can create multiple products.
+User.hasOne(Cart); // One to One relation
+Cart.belongsTo(User); // One to One relation
+Product.belongsToMany(Cart, {through: CartItem}); // Many to Many relation.
+Cart.belongsToMany(Product, {through: CartItem}); // Many to Many relation.
 
 // Here, in the app.js file is where the "SEQUELIZE" sync method has to be executed to enable
 // SEQUELIZE build tables in the database.
 // force: true - It is used to force the database to rewrite the existing table with new changes done with relations and create new tables.
 sequelize.
-// sync({force: true}).
-sync().then(result => {
+// sync({force: true})
+sync().
+then(result => {
     return User.findByPk(1);
-}).then(user => {
+})
+.then(user => {
     if(!user){
         return User.create({name: "SAI", email: "node@email.com"});
     }

@@ -22,7 +22,9 @@ exports.postAddProduct = (req, res, next) => {
   // The alternative way of adding the userId to the post method when adding a new product to the database is to use
   // the magic methods provided by the "Sequelize". These are nothing but the accessbility or provision to use/create a new method 
   // based on the relations/associations created within the database tables by "Sequelize".
-  req.user.createProduct({
+  
+  //req.user.createProduct() - here createProduct is the magic association method provided by the sequelize.
+  Product.create({
     title: title,
     imageUrl: imageUrl,
     price: price,
@@ -56,6 +58,7 @@ exports.postAddProduct = (req, res, next) => {
 // Implementing the findAll() method provided by the "SEQUELIZE" package to handle the getProducts() request
 // and then handling the response and the error through javascript promise concept with then() and catch().
 exports.getProducts = (req, res, next) => {
+  //req.user.getProducts() // getProducts() is a magic association method provided by sequelize.
   Product.findAll().then(products => {
     res.render('admin/products', {
       prods: products,
@@ -74,6 +77,7 @@ exports.getEditProductById = (req, res, next) => {
     return res.redirect('/');
   }
   const prodId = req.params.productId;
+  //req.user.getProducts({where: {id: prodId}}) // This is an alternative way, where we can use the getProducts() method which is a magic association method.
   Product.findByPk(prodId).then(
     (product) => {
       if(!product){
