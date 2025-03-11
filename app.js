@@ -10,8 +10,9 @@ const express = require('express');
 // Importing the Error controller to handle the error page request and send the response. 
 const errorController = require('./controllers/error');
 
-// Importing the database using "SEQUELIZE"
-const Sequelize = require('./util/database');
+//Importing the Models to create the relations in the Sequelize defined database.
+const Product = require('./models/product');
+const User = require('./models/user');
 
 const app = express(); // express() is the method which has the access to use all its features provided by the express framework to be used in the application.
 
@@ -41,12 +42,35 @@ app.use(shopRoutes);
 // Handling the Error response by utilizing the errorController with the extension get404().
 app.use(errorController.get404);
 
+// Adding the middleware to get the "user" data and use it anywhere in the application.
+// In order to get the user data first, it has to be create which is done in the line 61.
+app.use((req, res, next) => {
+    User.findByPk(1).then(user => {
+        req.user = user;
+        next();
+    }).catch(err => {console.log(err)});
+});
+
+// Configuring the databse with the "RELATIONS / ASSOCAITIONS" concept in "SEQUELIZE".
+Product.belongsTo(User, {constraints: true, onDelete: 'cascade'}); // This is stating that a product can be created by the user.
+User.hasMany(Product); // This is stating that a user can create multiple products.
+
 // Here, in the app.js file is where the "SEQUELIZE" sync method has to be executed to enable
 // SEQUELIZE build tables in the database.
-Sequelize.sync().then(result => {
-    console.log(result);
+// force: true - It is used to force the database to rewrite the existing table with new changes done with relations and create new tables.
+sequelize.
+// sync({force: true}).
+sync().then(result => {
+    return User.findByPk(1);
+}).then(user => {
+    if(!user){
+        return User.create({name: "SAI", email: "node@email.com"});
+    }
+    return user; // in the then block which is a promise it is mandatory to return the same value which is a promise again to chain and continue the process.
+}).then(user => {
+    // console.log(user);
     app.listen(3000);
-}).catch(err => console.log(err));
+}).catch(err => {console.log(err)});
 
 //listen is a method which makes the server listen to the events and display the responses on 
 // the browser in the particular port provided.
