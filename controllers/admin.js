@@ -19,18 +19,38 @@ exports.postAddProduct = (req, res, next) => {
   // const product = new Product(null, title, imageUrl, description, price);
   // product.save().then(() => {res.redirect('/')}).catch(err => console.log(err));
 
-  // Using the new product (Model) which is created based on Sequelize.
-  Product.create({
+  // The alternative way of adding the userId to the post method when adding a new product to the database is to use
+  // the magic methods provided by the "Sequelize". These are nothing but the accessbility or provision to use/create a new method 
+  // based on the relations/associations created within the database tables by "Sequelize".
+  req.user.createProduct({
     title: title,
     imageUrl: imageUrl,
     price: price,
-    description: description
+    description: description,
   }).then(
-    // result => console.log(result)
-    console.log('New Product Added'),
+    result => {
+      console.log('New Product Added');
+      res.redirect('/admin/products');
+    }
   ).catch(
     err => console.log(err));
-};
+  };
+
+//   // Using the new product (Model) which is created based on Sequelize.
+//   Product.create({
+//     title: title,
+//     imageUrl: imageUrl,
+//     price: price,
+//     description: description,
+//     // After, injecting the associations / relations in the database tables using sequelize a new table column is inserted which is "userId".
+//     // So, now on when ever a new product is posted this "userId" field is also to be added which can be done as below.
+//     // userId: req.user.id,
+//   }).then(
+//     // result => console.log(result)
+//     console.log('New Product Added'),
+//   ).catch(
+//     err => console.log(err));
+// };
 
 // GET Request to handle the products managed by the admin functionality using the controllers in MVC pattern.
 // Implementing the findAll() method provided by the "SEQUELIZE" package to handle the getProducts() request
