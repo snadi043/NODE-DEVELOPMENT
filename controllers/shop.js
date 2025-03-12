@@ -60,14 +60,36 @@ exports.getCart = (req, res, next) => {
 // navigated from "details" button in the prodcuts page using the controllers in the MVC pattern.
 exports.postCart = (req, res, next) => {
   const prodId = req.body.productId;
-  Product.findProductById(prodId, (product) => {
-    Cart.addToCart(prodId, product.price);
-  });
+  let fetchedCart;
+  // Cart.getCartProducts().then(
+  req.user.getCart().then(
+    cart => {
+      fetchedCart = cart;
+      return cart.getProducts({where: {id: prodId}});
+    }).then(products => {
+      // This is the code for already existing prodct in the cart.
+      let product;
+      if(products.length > 0){
+        product = products[0];
+      }
+      let newQuantity = 1;
+      // This is the code for new product in the cart
+        if(product){
+          const oldQuantity = product.cartItem.quantity;
+          newQuantity = oldQuantity + 1;
+          return fetchedCart.addProduct(product, {through: {quantity: newQuantity}});
+        }
+        return Product.findProductById(prodId).then(
+          product => {
+            return fetchedCart.addProduct(product, {through : newQuantity});
+          }
+        ).catch(err => {console.log(err)})
+        .then(() => {res.redirect('/cart')});
+      }).catch(err => {console.log(err)});
   // {
     // path: '/cart',
     // pageTitle: 'Add to Cart'
   // }
-  res.redirect('/cart');
 }
 
 // GET Request to handle the Orders Page using the controllers in the MVC pattern.
@@ -121,8 +143,17 @@ exports.getCartProducts = (req, res, next) => {
 // POST Request to handle the delete product in the cart functionality which is managed by the shop.
 exports.postDeleteCartProduct = (req, res, next) => {
   const prodId = req.body.productId;
-  Product.findProductById(prodId, product => {
-    Cart.deleteProduct(prodId, product.price);
-    res.render('/cart');
-  });
+  req.user.getCart().then(
+    cart => {
+      return cart.getProducts({where: {id: prodId}});
+    }
+  ).then(products => {
+    const product = products[0];
+    return product.cartItem.destroy();
+  }
+).then(result => res.render('/cart')
+).catch(err => {console.log(err)});
+  // Product.findProductById(prodId, product => {
+  //   Cart.deleteProduct(prodId, product.price);
+  // });
 }
