@@ -76,9 +76,12 @@ then(result => {
     }
     return user; // in the then block which is a promise it is mandatory to return the same value which is a promise again to chain and continue the process.
 }).then(user => {
+    return user.createCart(); // createCart() is the magic association method provided by the sequelize.
     // console.log(user);
+}).then(cart => {
     app.listen(3000);
-}).catch(err => {console.log(err)});
+})
+.catch(err => {console.log(err)});
 
 //listen is a method which makes the server listen to the events and display the responses on 
 // the browser in the particular port provided.

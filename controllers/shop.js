@@ -90,22 +90,32 @@ exports.getCheckout = (req, res, next) => {
 // GET Request to handle the Fetch products in the cart functionality which is managed by the shop and 
 // also checking the product id to handle the product details in the cart.
 exports.getCartProducts = (req, res, next) => {
-  Cart.getCartProducts(cart => {
-    Product.fetchAll(products => {
-      const cartProducts = [];
-      for (product of products){
-        const cartProductData = cart.products.find(prod => prod.id === product.id);
-        if(cartProductData){
-          cartProducts.push({productData: product, qty: cartProductData.qty});
-        }
-      }
-        res.render('/cart', {
+  req.user.getCart().then(cart => {
+    return cart.getProducts()
+    .then(products => {
+      res.render('/shop/cart', {
         path: '/cart',
-        products: cartProducts,
-      }
-    );
-  });
-});
+        products: products,
+        pageTitle: 'Your Cart',
+      });
+    }).catch(err => {console.log(err)}); // getProducts() is a magic association method provided by sequelize.
+  }).catch(err => {console.log(err)});
+//   Cart.getCartProducts(cart => {
+//     Product.fetchAll(products => {
+//       const cartProducts = [];
+//       for (product of products){
+//         const cartProductData = cart.products.find(prod => prod.id === product.id);
+//         if(cartProductData){
+//           cartProducts.push({productData: product, qty: cartProductData.qty});
+//         }
+//       }
+//         res.render('/cart', {
+//         path: '/cart',
+//         products: cartProducts,
+//       }
+//     );
+//   });
+// });
 } 
 
 // POST Request to handle the delete product in the cart functionality which is managed by the shop.
