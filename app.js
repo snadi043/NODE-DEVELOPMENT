@@ -15,6 +15,8 @@ const Product = require('./models/product');
 const User = require('./models/user');
 const Cart = require('./models/cart');
 const CartItem = require('./models/cart-item');
+const Order = require('./models/order');
+const OrderItem = require('./models/order-item');
 
 const app = express(); // express() is the method which has the access to use all its features provided by the express framework to be used in the application.
 
@@ -60,12 +62,17 @@ User.hasOne(Cart); // One to One relation
 Cart.belongsTo(User); // One to One relation
 Product.belongsToMany(Cart, {through: CartItem}); // Many to Many relation.
 Cart.belongsToMany(Product, {through: CartItem}); // Many to Many relation.
+Order.belongsTo(User); // One to One relation
+User.hasMany(Order);    // One to Many relation
+Order.belongsToMany(Product, {through: OrderItem}); // Many to Many realtion.
+Product.belongsToMany(Order, {through : OrderItem}); // Many to Many relation.
+
 
 // Here, in the app.js file is where the "SEQUELIZE" sync method has to be executed to enable
 // SEQUELIZE build tables in the database.
 // force: true - It is used to force the database to rewrite the existing table with new changes done with relations and create new tables.
 sequelize.
-// sync({force: true})
+// sync({force: true}).
 sync().
 then(result => {
     return User.findByPk(1);

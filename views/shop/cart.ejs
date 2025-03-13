@@ -16,5 +16,11 @@
             <% } else { %>
                 <h1>No Products found in the Cart</h1>
             <% } %>
+            <hr/>
+            <div class="centered">
+                <form action="/create-order" method="POST">
+                    <button type="submit" >Checkout Now</button>
+                </form>
+            </div>
         </main>
         <%- include('../includes/end.ejs') %>

@@ -157,3 +157,27 @@ exports.postDeleteCartProduct = (req, res, next) => {
   //   Cart.deleteProduct(prodId, product.price);
   // });
 }
+
+exports.postCreateOrder = (req, res, next) => {
+  req.user
+  .getCart()
+  .then(cart => {
+    cart.getProducts();
+  })
+  .then(products => {
+    return req.user.createOrder()
+    .then(order => {
+      order.addProducts(products.map(product => {
+        product.orderItem = {quantity: product.cartItem.quantity};
+        return product;
+      }));
+    })
+    .cathc(err => {
+      console.log(err);
+    });
+  })
+  .then(result => {
+    res.redirect('/orders');
+  })
+  .catch(err => {console.log(err)});
+}

@@ -51,4 +51,6 @@ router.get('/checkout', shopController.getCheckout);
 // importing the shopController middleware from the controllers folder and executing the method getCheckout.
 router.post('/cart/delete-product', shopController.postDeleteCartProduct);
 
+router.post('/create-order', shopController.postCreateOrder);
+
 module.exports = router;
