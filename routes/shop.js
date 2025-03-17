@@ -45,7 +45,7 @@ router.get('/orders', shopController.getOrders);
 
 // /checkout => GET
 // importing the shopController middleware from the controllers folder and executing the method getCheckout.
-router.get('/checkout', shopController.getCheckout);
+// router.get('/checkout', shopController.getCheckout);
 
 // /cart/delete-product => POST
 // importing the shopController middleware from the controllers folder and executing the method getCheckout.

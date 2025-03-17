@@ -1,5 +1,4 @@
 const Product = require('../models/product');
-const Cart = require('../models/cart');
 
 // GET Request to handle the display of the products functionality using the controllers in MVC pattern.
 // Implementing using the database and promises.
@@ -50,10 +49,19 @@ exports.getIndex = (req, res, next) => {
 
 // GET Request to handle the Shopping Cart Page using the controllers in the MVC pattern.
 exports.getCart = (req, res, next) => {
-  res.render('shop/cart', {
-    path: '/cart',
-    pageTitle: 'Your Cart'
-  });
+  req.user
+  .getCart()
+  .then(cart => {
+    return cart.getProducts()
+    .then(products => {
+      res.render('shop/cart', {
+        path: '/cart',
+        pageTitle: 'Your Cart',
+        products: products,
+      });
+    })
+  })
+  .catch(err => {console.log(err)});
 };
 
 // POST Request to handle the Shopping Cart Page after clicking on "add-to-cart" button when 
@@ -62,7 +70,8 @@ exports.postCart = (req, res, next) => {
   const prodId = req.body.productId;
   let fetchedCart;
   // Cart.getCartProducts().then(
-  req.user.getCart().then(
+  req.user
+  .getCart().then(
     cart => {
       fetchedCart = cart;
       return cart.getProducts({where: {id: prodId}});
@@ -94,34 +103,40 @@ exports.postCart = (req, res, next) => {
 
 // GET Request to handle the Orders Page using the controllers in the MVC pattern.
 exports.getOrders = (req, res, next) => {
-  res.render('shop/orders', {
-    path: '/orders',
-    pageTitle: 'Your Orders'
-  });
+  req.user
+  .getOrders({include: ['products']}) //getOrders() is a magic association method.
+    .then(orders => {
+      res.render('shop/orders', {
+        path: '/orders',
+        pageTitle: 'Your Orders',
+        orders: orders
+      });
+    })
+    .catch(err => {console.log(err)});
 };
 
 // GET Request to handle the Checkout Page using the controllers in the MVC pattern.
-exports.getCheckout = (req, res, next) => {
-  res.render('shop/checkout', {
-    path: '/checkout',
-    pageTitle: 'Checkout'
-  });
-};
+// exports.getCheckout = (req, res, next) => {
+//   res.render('shop/checkout', {
+//     path: '/checkout',
+//     pageTitle: 'Checkout'
+//   });
+// };
 
 
 // GET Request to handle the Fetch products in the cart functionality which is managed by the shop and 
 // also checking the product id to handle the product details in the cart.
-exports.getCartProducts = (req, res, next) => {
-  req.user.getCart().then(cart => {
-    return cart.getProducts()
-    .then(products => {
-      res.render('/shop/cart', {
-        path: '/cart',
-        products: products,
-        pageTitle: 'Your Cart',
-      });
-    }).catch(err => {console.log(err)}); // getProducts() is a magic association method provided by sequelize.
-  }).catch(err => {console.log(err)});
+// exports.getCartProducts = (req, res, next) => {
+//   req.user.getCart().then(cart => {
+//     return cart.getProducts()
+//     .then(products => {
+//       res.render('/shop/cart', {
+//         path: '/cart',
+//         products: products,
+//         pageTitle: 'Your Cart',
+//       });
+//     }).catch(err => {console.log(err)}); // getProducts() is a magic association method provided by sequelize.
+//   }).catch(err => {console.log(err)});
 //   Cart.getCartProducts(cart => {
 //     Product.fetchAll(products => {
 //       const cartProducts = [];
@@ -138,7 +153,7 @@ exports.getCartProducts = (req, res, next) => {
 //     );
 //   });
 // });
-} 
+//} 
 
 // POST Request to handle the delete product in the cart functionality which is managed by the shop.
 exports.postDeleteCartProduct = (req, res, next) => {
@@ -159,9 +174,11 @@ exports.postDeleteCartProduct = (req, res, next) => {
 }
 
 exports.postCreateOrder = (req, res, next) => {
+  let fetchedCart;
   req.user
   .getCart()
   .then(cart => {
+    fetchedCart = cart;
     cart.getProducts();
   })
   .then(products => {
@@ -177,6 +194,8 @@ exports.postCreateOrder = (req, res, next) => {
     });
   })
   .then(result => {
+    return fetchedCart.setProducts(null); // setProducts() is the magic association method to clear the cart.
+  }).then(result => {
     res.redirect('/orders');
   })
   .catch(err => {console.log(err)});
